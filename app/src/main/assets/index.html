@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>استراتيجية العالم</title>
+<style>
+:root{--bg:#101923;--panel:#192633;--gold:#e5b85c;--text:#f3f0e8;--muted:#9aabb8;--line:#314655}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,"Noto Sans Arabic",sans-serif;touch-action:none}
+#app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto;gap:7px;padding:8px}
+header,.panel,.bottom{background:linear-gradient(135deg,#1b2b38,#14212c);border:1px solid var(--line);border-radius:13px}
+header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;gap:8px;min-height:52px}
+.brand{font-weight:800;color:var(--gold);font-size:clamp(14px,2.4vw,21px)}
+.stats{display:flex;gap:12px;flex-wrap:wrap;font-size:clamp(10px,1.7vw,14px);color:#dce5e9}
+.stat b{color:var(--gold)}
+main{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(155px,23%);gap:7px}
+#mapBox{position:relative;overflow:hidden;background:#0b2638;border:1px solid #365468;border-radius:13px;min-width:0;touch-action:none}
+#world{width:100%;height:100%;display:block;touch-action:none}
+.maptools{position:absolute;left:8px;top:8px;display:flex;gap:5px;direction:ltr}
+button{border:1px solid #536b7b;background:#233746;color:var(--text);padding:8px 11px;border-radius:9px;font-weight:700;font-size:12px}
+button:active{transform:scale(.97);background:#385266}
+#hint{position:absolute;bottom:8px;right:8px;background:#0b1822d9;border:1px solid #355064;border-radius:8px;padding:6px 9px;font-size:11px;color:#c8d5dc;pointer-events:none}
+aside{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}
+.panel{padding:10px;overflow:hidden}
+.panel h2{font-size:14px;margin:0 0 8px;color:var(--gold)}
+#countryName{font-size:18px;font-weight:800;margin-bottom:4px}
+.muted{color:var(--muted);font-size:12px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+.mini{background:#0f1d27;border:1px solid #2d4352;border-radius:8px;padding:7px;font-size:11px;color:var(--muted)}
+.mini strong{display:block;color:#f5f0e4;font-size:14px;margin-top:3px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.actions button{min-height:38px}
+.bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;font-size:11px;color:var(--muted)}
+#message{color:#f1d99d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.land{fill:#54705f;stroke:#a0b39a;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer}
+.land.selected{fill:#b08a45;stroke:#ffe0a0;stroke-width:2.4}
+.land:hover{fill:#779174}
+.graticule{fill:none;stroke:#31566a;stroke-width:1;opacity:.7}
+.city{fill:#f6d98e;stroke:#392d16;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.army{font-size:22px;paint-order:stroke;stroke:#0c1c27;stroke-width:2px;cursor:pointer}
+@media(max-height:420px){#app{padding:5px;gap:5px}header{min-height:40px;padding:5px 9px}.panel{padding:7px}.panel h2{margin-bottom:4px}.grid2{margin-top:5px}.bottom{padding:4px 8px}}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+ <div class="brand">⚔ استراتيجية العالم</div>
+ <div class="stats">
+  <span class="stat">💰 الخزينة <b id="money">1200</b></span>
+  <span class="stat">⛏ الموارد <b id="resources">80</b></span>
+  <span class="stat">📅 اليوم <b id="day">1</b></span>
+ </div>
+</header>
+<main>
+ <section id="mapBox" aria-label="خارطة العالم">
+  <svg id="world" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet" role="img" aria-label="خريطة عالم استراتيجية">
+   <defs>
+    <pattern id="sea" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1b3b4e" stroke-width="1"/></pattern>
+   </defs>
+   <rect width="1000" height="520" fill="#0b2638"/>
+   <rect width="1000" height="520" fill="url(#sea)"/>
+   <g id="camera">
+    <g class="graticule">
+     <path d="M0 260H1000 M0 130H1000 M0 390H1000 M250 0V520 M500 0V520 M750 0V520"/>
+     <ellipse cx="500" cy="260" rx="450" ry="220"/><ellipse cx="500" cy="260" rx="300" ry="220"/><ellipse cx="500" cy="260" rx="140" ry="220"/>
+    </g>
+    <g id="continents">
+     <path class="land" data-country="أمريكا الشمالية" d="M72 105 L110 64 175 52 225 72 262 102 248 130 213 139 201 171 173 189 157 225 133 215 122 181 91 160 73 132Z"/>
+     <path class="land" data-country="أمريكا الوسطى" d="M202 187 L225 201 241 224 259 230 269 248 252 255 235 237 218 225Z"/>
+     <path class="land" data-country="أمريكا الجنوبية" d="M255 252 L298 255 330 281 324 317 305 348 294 389 272 431 255 408 251 370 231 337 231 298Z"/>
+     <path class="land" data-country="أوروبا" d="M444 104 L468 82 502 87 519 105 546 99 561 117 544 137 515 143 498 160 474 148 459 130 437 127Z"/>
+     <path class="land" data-country="أفريقيا" d="M457 166 L497 151 535 165 557 201 546 238 525 273 505 316 485 304 469 266 448 228 440 194Z"/>
+     <path class="land" data-country="آسيا" d="M530 89 L575 67 636 62 682 77 727 72 780 94 836 111 858 140 830 159 790 151 766 177 725 171 698 191 662 178 629 194 601 173 568 164 548 143 562 122Z"/>
+     <path class="land" data-country="الهند" d="M623 191 L655 190 672 217 659 249 645 270 633 240 619 218Z"/>
+     <path class="land" data-country="جنوب شرق آسيا" d="M695 208 L730 209 749 232 778 242 791 262 769 269 747 249 725 244 708 226Z"/>
+     <path class="land" data-country="اليابان" d="M834 173 L847 185 843 204 833 195Z"/>
+     <path class="land" data-country="أستراليا" d="M775 307 L820 292 862 310 874 341 850 363 813 357 786 339Z"/>
+     <path class="land" data-country="غرينلاند" d="M282 39 L320 27 351 45 342 75 313 88 290 68Z"/>
+     <path class="land" data-country="الشرق الأوسط" d="M550 166 L581 165 601 184 589 204 562 201 543 184Z"/>
+    </g>
+    <g id="markers">
+     <circle class="city" cx="494" cy="123" r="4"/><text x="503" y="119" fill="#f6e8c2" font-size="12">أوروبا</text>
+     <circle class="city" cx="571" cy="183" r="4"/><text x="579" y="180" fill="#f6e8c2" font-size="12">الشرق الأوسط</text>
+     <text class="army" x="573" y="201" data-army="true">🛡️</text>
+     <text class="army" x="495" y="142" data-army="true">🛡️</text>
+    </g>
+   </g>
+  </svg>
+  <div class="maptools">
+   <button id="zoomIn" aria-label="تكبير">＋</button><button id="zoomOut" aria-label="تصغير">－</button><button id="reset">إعادة الخارطة</button>
+  </div>
+  <div id="hint">اسحب لتحريك الخارطة • اضغط على منطقة لاختيارها</div>
+ </section>
+ <aside>
+  <section class="panel">
+   <h2>الدولة المحددة</h2>
+   <div id="countryName">العراق</div>
+   <div class="muted" id="countryDesc">اختر منطقة من الخارطة لعرض بياناتها.</div>
+   <div class="grid2">
+    <div class="mini">الاستقرار<strong id="stability">72%</strong></div>
+    <div class="mini">القوة<strong id="power">18</strong></div>
+    <div class="mini">السكان<strong id="population">45 م</strong></div>
+    <div class="mini">الدخل / يوم<strong id="income">+120</strong></div>
+   </div>
+  </section>
+  <section class="panel">
+   <h2>إدارة الدولة</h2>
+   <div class="actions">
+    <button id="develop">🏗 تطوير</button>
+    <button id="recruit">🛡 تجنيد</button>
+    <button id="endDay">⏩ يوم جديد</button>
+    <button id="save">💾 حفظ</button>
+   </div>
+   <p class="muted" id="status" style="margin-bottom:0">نسخة أولية قابلة للتجربة.</p>
+  </section>
+ </aside>
+</main>
+<footer class="bottom"><span>نسخة أولية 0.1 • خريطة تخطيطية للتجربة وليست حدوداً جغرافية دقيقة</span><span id="message">ابدأ باختيار منطقة</span></footer>
+</div>
+<script>
+(() => {
+ const svg = document.getElementById('world'), camera = document.getElementById('camera');
+ const box = document.getElementById('mapBox');
+ let scale=1, tx=0, ty=0, pointers=new Map(), drag=null, pinch=null;
+ const state={money:1200,resources:80,day:1,power:18,stability:72,population:45,income:120,selected:'العراق'};
+ const $=id=>document.getElementById(id);
+ const defaults={money:1200,resources:80,day:1,power:18,stability:72,population:45,income:120,selected:'العراق'};
+ function render(){ $('money').textContent=state.money; $('resources').textContent=state.resources; $('day').textContent=state.day;
+  $('power').textContent=state.power; $('stability').textContent=state.stability+'%'; $('population').textContent=state.population+' م'; $('income').textContent='+'+state.income;
+  $('countryName').textContent=state.selected; $('countryDesc').textContent='منطقة مختارة في نسخة تجريبية من لعبة استراتيجية العالم.';
+ }
+ function transform(){camera.setAttribute('transform',`translate(${tx} ${ty}) translate(500 260) scale(${scale}) translate(-500 -260)`);}
+ function zoom(f){const old=scale; scale=Math.max(.75,Math.min(3.5,scale*f)); if(scale!==old){tx=tx*scale/old;ty=ty*scale/old;transform();}}
+ $('zoomIn').onclick=()=>zoom(1.2); $('zoomOut').onclick=()=>zoom(1/1.2);
+ $('reset').onclick=()=>{scale=1;tx=0;ty=0;transform();$('message').textContent='تمت إعادة عرض الخارطة';};
+ svg.querySelectorAll('.land').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();svg.querySelectorAll('.land').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');state.selected=el.dataset.country;render();$('message').textContent='تم اختيار '+state.selected;}));
+ function point(e){const r=svg.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*1000,y:(e.clientY-r.top)/r.height*520};}
+ box.addEventListener('pointerdown',e=>{box.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)drag={x:e.clientX,y:e.clientY,tx,ty};else if(pointers.size===2){const p=[...pointers.values()];pinch={d:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),scale};drag=null;}});
+ box.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const old=pointers.get(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2&&pinch){const p=[...pointers.values()];const d=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);scale=Math.max(.75,Math.min(3.5,pinch.scale*d/Math.max(1,pinch.d)));transform();}
+  else if(drag&&pointers.size===1){tx=drag.tx+(e.clientX-drag.x)/svg.getBoundingClientRect().width*1000;ty=drag.ty+(e.clientY-drag.y)/svg.getBoundingClientRect().height*520;transform();}
+ });
+ function end(e){pointers.delete(e.pointerId);if(pointers.size<2)pinch=null;if(!pointers.size)drag=null;}
+ box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end);
+ $('develop').onclick=()=>{if(state.money<250){$('message').textContent='الخزينة لا تكفي للتطوير';return;}state.money-=250;state.income+=25;state.stability=Math.min(100,state.stability+2);render();$('message').textContent='تم تطوير البنية التحتية';};
+ $('recruit').onclick=()=>{if(state.resources<15||state.money<100){$('message').textContent='الموارد أو الخزينة غير كافية';return;}state.resources-=15;state.money-=100;state.power+=3;render();$('message').textContent='تمت إضافة وحدات جديدة';};
+ $('endDay').onclick=()=>{state.day++;state.money+=state.income;state.resources+=5;state.stability=Math.max(0,state.stability-1);render();$('message').textContent='بدأ اليوم '+state.day;save(false);};
+ function save(notify=true){try{localStorage.setItem('worldStrategySave',JSON.stringify(state));if(notify)$('message').textContent='تم حفظ التقدم على الجهاز';}catch(e){$('message').textContent='تعذر الحفظ في هذا المتصفح';}}
+ $('save').onclick=()=>save(true);
+ try{const saved=JSON.parse(localStorage.getItem('worldStrategySave')||'null');if(saved)Object.assign(state,saved);}catch(e){}
+ render();transform();
+})();
+</script>
+</body>
+</html>
