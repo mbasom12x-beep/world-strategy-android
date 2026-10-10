@@ -28,6 +28,11 @@ jobs:
       - name: Install Android SDK packages
         run:  yes | sdkmanager --sdk_root="$ANDROID_HOME" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
+      - name: Download world map data
+        run: |
+          mkdir -p app/src/main/assets
+          curl -fL "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson" -o app/src/main/assets/world_countries.geojson
+          
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
