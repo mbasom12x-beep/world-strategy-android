@@ -33,9 +33,9 @@ aside{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}
 .actions button{min-height:38px}
 .bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;font-size:11px;color:var(--muted)}
 #message{color:#f1d99d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.land{fill:#54705f;stroke:#a0b39a;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer}
-.land.selected{fill:#b08a45;stroke:#ffe0a0;stroke-width:2.4}
-.land:hover{fill:#779174}
+.land{fill:#ffffff;fill-opacity:0.015;stroke:#aeb8c2;stroke-width:1.2;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer}
+.land.selected{fill:#ffffff;fill-opacity:0.06;stroke:#ffffff;stroke-width:2}
+.land:hover{fill:#ffffff;fill-opacity:0.04}
 .graticule{fill:none;stroke:#31566a;stroke-width:1;opacity:.7}
 .city{fill:#f6d98e;stroke:#392d16;stroke-width:1.5;vector-effect:non-scaling-stroke}
 .army{font-size:22px;paint-order:stroke;stroke:#0c1c27;stroke-width:2px;cursor:pointer}
@@ -61,6 +61,7 @@ aside{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:auto}
    <rect width="1000" height="520" fill="#0b2638"/>
    <rect width="1000" height="520" fill="url(#sea)"/>
    <g id="camera">
+    <image id="newMapBackground" href="images/iraq_new_map.png" x="0" y="0" width="1000" height="520" preserveAspectRatio="none" opacity="0.85" pointer-events="none"/>
     <g class="graticule">
      <path d="M0 260H1000 M0 130H1000 M0 390H1000 M250 0V520 M500 0V520 M750 0V520"/>
      <ellipse cx="500" cy="260" rx="450" ry="220"/><ellipse cx="500" cy="260" rx="300" ry="220"/><ellipse cx="500" cy="260" rx="140" ry="220"/>
